@@ -1,0 +1,6 @@
+/WebService-Reddit*
+.build
+local
+*.swo
+*.swp
+.tidyall.d
