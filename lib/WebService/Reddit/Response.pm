@@ -42,3 +42,35 @@ sub _build_success {
 }
 
 1;
+__END__
+
+# ABSTRACT: Thin wrapper around HTTP::Response objects
+
+=pod
+
+=head1 CONSTRUCTOR ARGUMENTS
+
+=over
+
+=item raw
+
+An L<HTTP::Response> object.
+
+=back
+
+=head1 METHODS
+
+=head2 content
+
+This is the parsed JSON body of the response.  Generally this will be a C<HashRef>.
+
+=head2 raw
+
+Returns the raw L<HTTP::Response> object.
+
+=head2 success
+
+Returns true if the Reddit API returns a 2xx code and the C<X-Died> header has
+not been set..
+
+=cut
