@@ -3,7 +3,7 @@ package WebService::Reddit;
 use Moo;
 use MooX::StrictConstructor;
 
-use Types::Standard qw( Bool InstanceOf Str );
+use Types::Standard qw( Bool InstanceOf Int Str );
 use Types::URI -all;
 use URI                          ();
 use WWW::Mechanize               ();
@@ -14,6 +14,13 @@ has access_token => (
     isa      => Str,
     required => 1,
     writer   => '_set_access_token',
+);
+
+has access_token_expiration => (
+    is        => 'ro',
+    isa       => Int,
+    predicate => 'has_access_token_expiration',
+    writer    => '_set_access_token_expiration',
 );
 
 has _app_key => (
@@ -95,6 +102,7 @@ sub refresh_access_token {
     die 'Cannot refresh token: ' . $res->as_string unless $res->success;
 
     $self->_set_access_token( $auth->{access_token} );
+    $self->_set_access_token_expiration( time + $auth->{expires_in} );
     $self->ua->clear_credentials;
 
     return 1;
@@ -178,6 +186,17 @@ and C<scheme> values, which can also be set via the constructor.
 Returns the current C<access_token>.  This may not be the token which you
 originally supplied.  If your supplied token has been expired then this module
 will try to get you a fresh C<access_token>.
+
+=head2 access_token_expiration
+
+Returns expiration time of access token in epoch seconds, if available.  Check the predicate before calling this method in order to avoid a possible exception.
+
+    print $client->access_token_expiration
+        if $client->has_access_token_expiration .
+
+=head2 has_access_token_expiration
+
+Predicate.  Returns true if C<access_token_expiration> has been set.
 
 =head2 refresh_access_token
 

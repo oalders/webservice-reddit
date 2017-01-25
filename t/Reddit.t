@@ -29,7 +29,8 @@ if ( $ENV{DEBUG_REDDIT} ) {
         $ua ? ( ua => $ua ) : (),
     );
 
-    ok( $reddit, 'create object' );
+    ok( $reddit,                               'create object' );
+    ok( !$reddit->has_access_token_expiration, 'no expiration by default' );
 
     like(
         dies { $reddit->get('/api/v1/me') },
@@ -48,10 +49,13 @@ my $config   = get_config();
 SKIP: {
     skip "$filename not found", 1, unless $config;
     ok( 'placeholder', 'placeholder test' );
-    my $reddit = WebService::Reddit->new($config);
-    my $me     = $reddit->get('/api/v1/me');
+    my $reddit
+        = WebService::Reddit->new( %{$config}, $ua ? ( ua => $ua ) : (), );
+    my $me = $reddit->get('/api/v1/me');
     ok( $me->success,               'success' );
     ok( $me->content->{link_karma}, 'response includes link_karma' );
+    ok( $reddit->has_access_token_expiration, 'expiration predicate' );
+    ok( $reddit->has_access_token_expiration, 'expiration' );
 }
 
 sub get_config {

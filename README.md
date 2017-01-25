@@ -76,6 +76,17 @@ Returns the current `access_token`.  This may not be the token which you
 originally supplied.  If your supplied token has been expired then this module
 will try to get you a fresh `access_token`.
 
+## access\_token\_expiration
+
+Returns expiration time of access token in epoch seconds, if available.  Check the predicate before calling this method in order to avoid a possible exception.
+
+    print $client->access_token_expiration
+        if $client->has_access_token_expiration .
+
+## has\_access\_token\_expiration
+
+Predicate.  Returns true if `access_token_expiration` has been set.
+
 ## refresh\_access\_token
 
 Tries to refresh the `access_token`.  Returns true on success and dies on
