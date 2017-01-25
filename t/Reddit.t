@@ -9,28 +9,34 @@ use Test::RequiresInternet (
 );
 use Test2::Bundle::Extended;
 use Test2::Compare qw( compare );
+use WWW::Mechanize;
 use WebService::Reddit ();
 
-use WWW::Mechanize;
-use LWP::ConsoleLogger::Easy qw( debug_ua );
-my $ua = WWW::Mechanize->new( autocheck => 0 );
-debug_ua($ua);
+my $ua;
 
-my $reddit = WebService::Reddit->new(
-    access_token  => 'qux',
-    app_key       => 'foo',
-    app_secret    => 'bar',
-    refresh_token => 'baz',
-    ua            => $ua,
-);
+if ( $ENV{DEBUG_REDDIT} ) {
+    require LWP::ConsoleLogger::Easy;
+    $ua = WWW::Mechanize->new( autocheck => 0 );
+    LWP::ConsoleLogger::Easy::debug_ua($ua);
+}
 
-ok( $reddit, 'create object' );
+{
+    my $reddit = WebService::Reddit->new(
+        access_token  => 'qux',
+        app_key       => 'foo',
+        app_secret    => 'bar',
+        refresh_token => 'baz',
+        $ua ? ( ua => $ua ) : (),
+    );
 
-like(
-    dies { $reddit->get('/api/v1/me') },
-    qr{Cannot refresh token}i,
-    'exception on bad auth'
-);
+    ok( $reddit, 'create object' );
+
+    like(
+        dies { $reddit->get('/api/v1/me') },
+        qr{Cannot refresh token}i,
+        'exception on bad auth'
+    );
+}
 
 my $filename = 'credentials.conf';
 my $config   = get_config();
@@ -42,6 +48,10 @@ my $config   = get_config();
 SKIP: {
     skip "$filename not found", 1, unless $config;
     ok( 'placeholder', 'placeholder test' );
+    my $reddit = WebService::Reddit->new($config);
+    my $me     = $reddit->get('/api/v1/me');
+    ok( $me->success,               'success' );
+    ok( $me->content->{link_karma}, 'response includes link_karma' );
 }
 
 sub get_config {
