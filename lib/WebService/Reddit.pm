@@ -164,6 +164,8 @@ Optional.  A useragent of the L<LWP::UserAgent> family.
 Optional.  Provide only if you want to route your requests somewhere other than
 the Reddit OAuth endpoint.
 
+=back
+
 =head2 get
 
 Returns a L<WebService::Reddit::Response> object.  Accepts an URL, which may or

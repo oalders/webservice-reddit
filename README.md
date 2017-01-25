@@ -97,11 +97,3 @@ This software is copyright (c) 2017 by Olaf Alders.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 70:
-
-    You forgot a '=back' before '=head2'
