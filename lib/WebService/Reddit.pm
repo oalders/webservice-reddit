@@ -176,20 +176,25 @@ the Reddit OAuth endpoint.
 
 =head2 get
 
-Returns a L<WebService::Reddit::Response> object.  Accepts an URL, which may or
-may not include GET params.  You can provide a relative URL.  If you provide an
-absolute URL, your scheme and host will get clobbered with the default C<host>
-and C<scheme> values, which can also be set via the constructor.
+Returns a L<WebService::Reddit::Response> object.  Accepts an URL (or L<URI>
+object), which may or may not include GET params.  You should provide a
+relative URL.  If you provide an absolute URL, your scheme and host will get
+clobbered with the C<base_uri>.
+
+    my $me        = $client->get('/api/v1/me');
+    my $new_posts = $client->get('/r/perl/new?limit=25');
 
 =head2 access_token
 
 Returns the current C<access_token>.  This may not be the token which you
-originally supplied.  If your supplied token has been expired then this module
+originally supplied.  If your supplied token has been expired, then this module
 will try to get you a fresh C<access_token>.
 
 =head2 access_token_expiration
 
-Returns expiration time of access token in epoch seconds, if available.  Check the predicate before calling this method in order to avoid a possible exception.
+Returns expiration time of access token in epoch seconds, if available.  Check
+the predicate before calling this method in order to avoid a possible
+exception.
 
     print $client->access_token_expiration
         if $client->has_access_token_expiration .

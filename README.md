@@ -65,20 +65,25 @@ This is a very thin wrapper around the Reddit OAuth API.
 
 ## get
 
-Returns a [WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.  Accepts an URL, which may or
-may not include GET params.  You can provide a relative URL.  If you provide an
-absolute URL, your scheme and host will get clobbered with the default `host`
-and `scheme` values, which can also be set via the constructor.
+Returns a [WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.  Accepts an URL (or [URI](https://metacpan.org/pod/URI)
+object), which may or may not include GET params.  You should provide a
+relative URL.  If you provide an absolute URL, your scheme and host will get
+clobbered with the `base_uri`.
+
+    my $me        = $client->get('/api/v1/me');
+    my $new_posts = $client->get('/r/perl/new?limit=25');
 
 ## access\_token
 
 Returns the current `access_token`.  This may not be the token which you
-originally supplied.  If your supplied token has been expired then this module
+originally supplied.  If your supplied token has been expired, then this module
 will try to get you a fresh `access_token`.
 
 ## access\_token\_expiration
 
-Returns expiration time of access token in epoch seconds, if available.  Check the predicate before calling this method in order to avoid a possible exception.
+Returns expiration time of access token in epoch seconds, if available.  Check
+the predicate before calling this method in order to avoid a possible
+exception.
 
     print $client->access_token_expiration
         if $client->has_access_token_expiration .
