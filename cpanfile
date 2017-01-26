@@ -1,4 +1,5 @@
 requires "JSON::MaybeXS" => "0";
+requires "LWP::Protocol::https" => "6.06";
 requires "Moo" => "0";
 requires "MooX::StrictConstructor" => "0";
 requires "Types::Standard" => "0";
