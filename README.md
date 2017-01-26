@@ -6,7 +6,7 @@ WebService::Reddit - Thin wrapper around the Reddit OAuth API
 
 # VERSION
 
-version 0.000001
+version 0.000002
 
 # SYNOPSIS
 
