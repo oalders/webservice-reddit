@@ -56,6 +56,9 @@ SKIP: {
     ok( $me->content->{link_karma}, 'response includes link_karma' );
     ok( $reddit->has_access_token_expiration, 'expiration predicate' );
     ok( $reddit->has_access_token_expiration, 'expiration' );
+
+    my $perly_bot = $reddit->get('/user/_perly_bot/about');
+    ok( $perly_bot->content->{data}->{link_karma}, '_perly_bot link karma' );
 }
 
 sub get_config {
