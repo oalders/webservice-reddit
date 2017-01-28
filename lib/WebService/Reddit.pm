@@ -1,6 +1,6 @@
 package WebService::Reddit;
 
-use Moo;
+use Moo 2.003000;
 use MooX::StrictConstructor;
 
 use Types::Standard qw( Bool InstanceOf Int Str );

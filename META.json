@@ -42,7 +42,7 @@
          "requires" : {
             "JSON::MaybeXS" : "0",
             "LWP::Protocol::https" : "6.06",
-            "Moo" : "0",
+            "Moo" : "2.003000",
             "MooX::StrictConstructor" : "0",
             "Types::Standard" : "0",
             "Types::URI" : "0",
