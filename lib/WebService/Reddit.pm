@@ -61,7 +61,6 @@ has ua => (
     default => sub { WWW::Mechanize->new( autocheck => 0 ) },
 );
 
-# Make a whole bunch of unsafe assumptions
 sub get {
     my $self     = shift;
     my $relative = URI->new(shift);
@@ -76,6 +75,24 @@ sub get {
         $self->refresh_access_token;
         $res = WebService::Reddit::Response->new(
             raw => $self->ua->get( $uri, $self->_auth ) );
+    }
+    return $res;
+}
+
+sub post {
+    my $self     = shift;
+    my $relative = URI->new(shift);
+    my $form     = shift;
+
+    my $uri = $self->_base_uri->clone;
+    $uri->path( $relative->path );
+
+    my $res = WebService::Reddit::Response->new(
+        raw => $self->ua->post( $uri, $form, $self->_auth, ) );
+    if ( $res->code == 401 ) {
+        $self->refresh_access_token;
+        $res = WebService::Reddit::Response->new(
+            raw => $self->ua->post( $uri, $form, $self->_auth ) );
     }
     return $res;
 }

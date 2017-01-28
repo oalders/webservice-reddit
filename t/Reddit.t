@@ -59,6 +59,12 @@ SKIP: {
 
     my $perly_bot = $reddit->get('/user/_perly_bot/about');
     ok( $perly_bot->content->{data}->{link_karma}, '_perly_bot link karma' );
+
+    my $post = $reddit->post(
+        '/api/search_reddit_names',
+        { exact => 1, query => 'perl' }
+    );
+    is( $post->content, { names => ['perl'] }, 'search_reddit_names' );
 }
 
 sub get_config {
