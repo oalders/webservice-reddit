@@ -65,6 +65,15 @@ SKIP: {
         { exact => 1, query => 'perl' }
     );
     is( $post->content, { names => ['perl'] }, 'search_reddit_names' );
+
+    my $delete = $reddit->delete(
+        '/api/v1/me/friends/someusernamethathopefullydoesnotexist!!!',
+        { id => 'asdf2897???!####' }
+    );
+    is(
+        $delete->content->{reason}, 'USER_DOESNT_EXIST',
+        'user does not exist'
+    );
 }
 
 sub get_config {

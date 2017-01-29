@@ -97,6 +97,26 @@ sub post {
     return $res;
 }
 
+sub delete {
+    my $self     = shift;
+    my $relative = URI->new(shift);
+
+    my $uri = $self->_base_uri->clone;
+    $uri->path( $relative->path );
+    $uri->path_query( $relative->path_query ) if $relative->path_query;
+
+    my $res
+        = WebService::Reddit::Response->new(
+        raw => $self->ua->delete( $uri, $self->_auth, ) );
+    if ( $res->code == 401 ) {
+        $self->refresh_access_token;
+        $res
+            = WebService::Reddit::Response->new(
+            raw => $self->ua->delete( $uri, $self->_auth ) );
+    }
+    return $res;
+}
+
 sub _auth {
     my $self = shift;
     return ( Authorization => 'bearer ' . $self->access_token );
