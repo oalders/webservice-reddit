@@ -62,64 +62,54 @@ has ua => (
 );
 
 sub get {
-    my $self     = shift;
-    my $relative = URI->new(shift);
+    my $self = shift;
+    my $uri  = $self->_normalize_uri(shift);
 
-    my $uri = $self->_base_uri->clone;
-    $uri->path( $relative->path );
-    $uri->path_query( $relative->path_query ) if $relative->path_query;
-
-    my $res = WebService::Reddit::Response->new(
-        raw => $self->ua->get( $uri, $self->_auth ) );
-    if ( $res->code == 401 ) {
-        $self->refresh_access_token;
-        $res = WebService::Reddit::Response->new(
-            raw => $self->ua->get( $uri, $self->_auth ) );
-    }
-    return $res;
+    return $self->_perform_request(
+        sub { $self->ua->get( $uri, $self->_auth ) } );
 }
 
 sub post {
-    my $self     = shift;
-    my $relative = URI->new(shift);
-    my $form     = shift;
+    my $self = shift;
+    my $uri  = $self->_normalize_uri(shift);
+    my $form = shift;
 
-    my $uri = $self->_base_uri->clone;
-    $uri->path( $relative->path );
-
-    my $res = WebService::Reddit::Response->new(
-        raw => $self->ua->post( $uri, $form, $self->_auth, ) );
-    if ( $res->code == 401 ) {
-        $self->refresh_access_token;
-        $res = WebService::Reddit::Response->new(
-            raw => $self->ua->post( $uri, $form, $self->_auth ) );
-    }
-    return $res;
+    return $self->_perform_request(
+        sub { $self->ua->post( $uri, $form, $self->_auth ) } );
 }
 
 sub delete {
-    my $self     = shift;
-    my $relative = URI->new(shift);
-
-    my $uri = $self->_base_uri->clone;
-    $uri->path( $relative->path );
-    $uri->path_query( $relative->path_query ) if $relative->path_query;
-
-    my $res
-        = WebService::Reddit::Response->new(
-        raw => $self->ua->delete( $uri, $self->_auth, ) );
-    if ( $res->code == 401 ) {
-        $self->refresh_access_token;
-        $res
-            = WebService::Reddit::Response->new(
-            raw => $self->ua->delete( $uri, $self->_auth ) );
-    }
-    return $res;
+    my $self = shift;
+    my $uri  = $self->_normalize_uri(shift);
+    return $self->_perform_request(
+        sub { $self->ua->delete( $uri, $self->_auth ) } );
 }
 
 sub _auth {
     my $self = shift;
     return ( Authorization => 'bearer ' . $self->access_token );
+}
+
+sub _normalize_uri {
+    my $self         = shift;
+    my $relative_uri = URI->new(shift);
+    my $uri          = $self->_base_uri->clone;
+    $uri->path( $relative_uri->path );
+    $uri->path_query( $relative_uri->path_query )
+        if $relative_uri->path_query;
+    return $uri;
+}
+
+sub _perform_request {
+    my $self = shift;
+    my $cb   = shift;
+
+    my $res = WebService::Reddit::Response->new( raw => $cb->() );
+    if ( $res->code == 401 ) {
+        $self->refresh_access_token;
+        $res = WebService::Reddit::Response->new( raw => $cb->() );
+    }
+    return $res;
 }
 
 sub refresh_access_token {
