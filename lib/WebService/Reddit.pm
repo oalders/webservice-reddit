@@ -63,7 +63,7 @@ has ua => (
 
 sub get {
     my $self = shift;
-    my $uri = $self->_normalize_uri( @_ );
+    my $uri  = $self->_normalize_uri(@_);
 
     return $self->_perform_request(
         sub { $self->ua->get( $uri, $self->_auth ) } );
@@ -80,7 +80,7 @@ sub post {
 
 sub delete {
     my $self = shift;
-    my $uri = $self->_normalize_uri( @_ );
+    my $uri  = $self->_normalize_uri(@_);
     return $self->_perform_request(
         sub { $self->ua->delete( $uri, $self->_auth ) } );
 }
