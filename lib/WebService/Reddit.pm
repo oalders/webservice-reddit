@@ -63,7 +63,7 @@ has ua => (
 
 sub get {
     my $self = shift;
-    my $uri  = $self->_normalize_uri(shift);
+    my $uri = $self->_normalize_uri( @_ );
 
     return $self->_perform_request(
         sub { $self->ua->get( $uri, $self->_auth ) } );
@@ -80,7 +80,7 @@ sub post {
 
 sub delete {
     my $self = shift;
-    my $uri  = $self->_normalize_uri(shift);
+    my $uri = $self->_normalize_uri( @_ );
     return $self->_perform_request(
         sub { $self->ua->delete( $uri, $self->_auth ) } );
 }
@@ -91,12 +91,15 @@ sub _auth {
 }
 
 sub _normalize_uri {
-    my $self         = shift;
-    my $relative_uri = URI->new(shift);
+    my $self   = shift;
+    my $path   = shift;
+    my $params = shift;
+
+    my $relative_uri = URI->new($path);
     my $uri          = $self->_base_uri->clone;
     $uri->path( $relative_uri->path );
-    $uri->path_query( $relative_uri->path_query )
-        if $relative_uri->path_query;
+    $uri->query_form($params) if keys %{$params};
+
     return $uri;
 }
 
@@ -203,13 +206,31 @@ the Reddit OAuth endpoint.
 
 =head2 get
 
-Returns a L<WebService::Reddit::Response> object.  Accepts an URL (or L<URI>
-object), which may or may not include GET params.  You should provide a
-relative URL.  If you provide an absolute URL, your scheme and host will get
-clobbered with the C<base_uri>.
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+L<WebService::Reddit::Response> object.
 
-    my $me        = $client->get('/api/v1/me');
-    my $new_posts = $client->get('/r/perl/new?limit=25');
+    my $me = $client->get('/api/v1/me');
+    my $new_posts = $client->get( '/r/perl/new', { limit => 25 } );
+
+=head2 delete
+
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+L<WebService::Reddit::Response> object.
+
+    my $delete = $client->delete(
+        '/api/v1/me/friends/randomusername',
+        { id => 'someid' }
+    );
+
+=head2 post
+
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+L<WebService::Reddit::Response> object.
+
+    my $post = $reddit->post(
+        '/api/search_reddit_names',
+        { exact => 1, query => 'perl' }
+    );
 
 =head2 access_token
 

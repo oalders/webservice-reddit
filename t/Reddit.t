@@ -60,6 +60,9 @@ SKIP: {
     my $perly_bot = $reddit->get('/user/_perly_bot/about');
     ok( $perly_bot->content->{data}->{link_karma}, '_perly_bot link karma' );
 
+    my $latest = $reddit->get('/r/perl/new', { limit => 3 });
+    is ( @{$latest->content->{data}->{children}}, 3, 'limit applied' );
+
     my $post = $reddit->post(
         '/api/search_reddit_names',
         { exact => 1, query => 'perl' }

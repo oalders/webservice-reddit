@@ -65,13 +65,31 @@ This is a very thin wrapper around the Reddit OAuth API.
 
 ## get
 
-Returns a [WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.  Accepts an URL (or [URI](https://metacpan.org/pod/URI)
-object), which may or may not include GET params.  You should provide a
-relative URL.  If you provide an absolute URL, your scheme and host will get
-clobbered with the `base_uri`.
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+[WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.
 
-    my $me        = $client->get('/api/v1/me');
-    my $new_posts = $client->get('/r/perl/new?limit=25');
+    my $me = $client->get('/api/v1/me');
+    my $new_posts = $client->get( '/r/perl/new', { limit => 25 } );
+
+## delete
+
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+[WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.
+
+    my $delete = $client->delete(
+        '/api/v1/me/friends/randomusername',
+        { id => 'someid' }
+    );
+
+## post
+
+Accepts a relative URL path and an optional HashRef of params.  Returns a
+[WebService::Reddit::Response](https://metacpan.org/pod/WebService::Reddit::Response) object.
+
+    my $post = $reddit->post(
+        '/api/search_reddit_names',
+        { exact => 1, query => 'perl' }
+    );
 
 ## access\_token
 
